@@ -26,7 +26,8 @@ var Person = require('../../model/personModel');
   we specify that in the exports of this module that 'hello' maps to the function named 'hello'
  */
 module.exports = {
-  hello: hello
+  getAllPeople: getAllPeople,
+  addPerson : addPerson
 };
 
 /*
@@ -35,20 +36,30 @@ module.exports = {
   Param 1: a handle to the request object
   Param 2: a handle to the response object
  */
-function hello(req, res) {
-  var person = new Person({
-    first_name : 'Cody',
-    middle_name : 'Gary',
-    last_name : 'Miller'
-  })
-
-  person.save().then(function(newPerson){
-    console.log(newPerson);
-  });
+function getAllPeople(req, res) {
   // variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
-  var name = req.swagger.params.name.value || 'stranger';
-  var hello = util.format('Hello, %s!', name);
 
   // this sends back a JSON response which is a single string
-  res.json(hello);
+  Person.find({}).then(function(foundPeople){
+    res.send(foundPeople);
+  }),function(err){
+    console.log(err);
+  };
+}
+
+function addPerson(req, res){
+  //console.log(req);
+  var newPerson = new Person({
+    first_name : req.body.first_name,
+    middle_name : req.body.middle_name,
+    last_name : req.body.last_name
+  });
+  newPerson.save().then(function(person){
+    console.log(person);
+    //res.send(person);
+    res.status(200);
+    res.send(person);
+    // res.send("Sup");
+  });
+
 }

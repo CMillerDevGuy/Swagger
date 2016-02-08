@@ -4,9 +4,9 @@ info:
   title: Hello World App
 # during dev, should point to your local machine
 host: localhost:10010
-# basePath prefixes all resource paths 
+# basePath prefixes all resource paths
 basePath: /
-# 
+#
 schemes:
   # tip: remove http to make production-grade
   - http
@@ -42,10 +42,109 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /cody:
+    x-swagger-router-controller: hello_cody
+    get:
+      description: Returns 'Hello' to the caller
+      # used as the method name of the controller
+      operationId: hello_cody
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /person:
+    x-swagger-router-controller: person
+    get:
+      description: Returns People in the DB
+      # used as the method name of the controller
+      operationId: getAllPeople
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+    #   summary: Create new nomination
+    #   description: ''
+    #   operationId: createNewEmployee
+    #   consumes:
+    #     - application/json
+    #   produces:
+    #     - application/json
+    #   parameters:
+    #     - in: formData
+    #       name: employee
+    #       description: Nomination object, this also forces the employee creating the nomination to write a review as well
+    #       required: true
+    #       schema:
+    #         $ref: '#/definitions/Person'
+    #   responses:
+    #     '200':
+    #       description: operation successful
+    #     '401':
+    #       description: You are not authorized to view this page.
+    #     '405':
+    #       description: Invalid input
+      summary: Create new person
+      description: Adds Person to DB
+      operationId: addPerson
+      # produces:
+      #   - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: person
+          in:  body
+          description: Person object
+          required: true
+          schema:
+            $ref: '#/definitions/Person'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Person"
+        '405':
+          description: Invalid data
+        '500':
+          description: Internal server error
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  Person:
+    type: object
+    properties:
+      _id:
+        type: string
+      first_name:
+        type: string
+        # example: Cody
+      middle_name:
+        type: string
+        # example: Gary
+      last_name:
+        type: string
+        # example: Miller
   HelloWorldResponse:
     required:
       - message

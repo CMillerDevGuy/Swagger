@@ -2,7 +2,15 @@
 
 var SwaggerExpress = require('swagger-express-mw');
 var app = require('express')();
-module.exports = app; // for testing
+
+var mongoose = require('mongoose');
+var db = mongoose.connect('mongodb://localhost/test', function(err, res){
+  if(err){
+    console.log('Error connecting to the database: ' + err);
+  } else{
+    console.log('Connected to database: mongodb://localhost/test');
+  }
+});
 
 var config = {
   appRoot: __dirname // required config
@@ -21,3 +29,4 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
   }
 });
+module.exports = app; // for testing
